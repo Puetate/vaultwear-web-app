@@ -52,7 +52,7 @@ export default function StatisticsCards() {
           >
             <div className="flex h-full w-full items-center justify-around gap-4">
               <span className="text-3xl">
-                {typeof value === "number" ? value.toLocaleString() : `$${value}`}
+                {typeof value === "number" ? value.toLocaleString() : `$${value ?? 0}`}
               </span>
               <div className="flex flex-col gap-2">
                 <span className="self-center">{icons[key as keyof Statistics]}</span>
