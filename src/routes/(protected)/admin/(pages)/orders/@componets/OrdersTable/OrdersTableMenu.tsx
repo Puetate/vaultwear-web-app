@@ -48,12 +48,10 @@ export default function OrdersTableMenu({ order }: OrdersTableMenuProps) {
         orderDetailID: detail.orderDetailID,
         orderID: order.orderID,
         orderDetailCode: detail.orderDetailCode,
-        urlContent: detail.urlContent,
-        contentTypeID: detail.contentTypeID,
-        contentTypeName: detail.contentTypeName,
         quantity: detail.quantity,
         price: detail.price,
-        description: detail.description
+        description: detail.description,
+        contents: detail.contents
       }))
     };
     modals.open({

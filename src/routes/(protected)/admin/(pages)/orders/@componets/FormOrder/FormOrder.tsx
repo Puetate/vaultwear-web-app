@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { useGetContentType } from "./@services/getContentType.service";
 import { usePostOrder } from "./@services/postOrder.service";
 import { usePutWithDetailsOrder } from "./@services/putOrderWithDetails.service";
-import { defaultDetail, orderInitialValues, OrderSchema, orderSchema } from "./orderSchema";
+import { createOrderSchema, defaultDetail, orderInitialValues, OrderSchema } from "./orderSchema";
 
 interface FormOrderProps {
   initialValues?: OrderSchema;
@@ -21,8 +21,9 @@ export default function FormOrder({ initialValues }: FormOrderProps) {
   const isEdit = useMemo(() => {
     return Boolean(initialValues?.order.orderID);
   }, [initialValues?.order.orderID]);
-  const { data: contentTypes } = useGetContentType();
 
+  const orderSchema = useMemo(() => createOrderSchema(isEdit), [isEdit]);
+  const { data: contentTypes } = useGetContentType();
   const { mutateAsync: createOrderMutation, isPending: isPendingCreate } = usePostOrder();
   const { mutateAsync: editOrderMutation, isPending: isPendingEdit } = usePutWithDetailsOrder();
 
@@ -62,6 +63,26 @@ export default function FormOrder({ initialValues }: FormOrderProps) {
       loading: `${isEdit ? "Editando" : "Creando"}Editando orden..`,
       success: `Orden ${isEdit ? "editada" : "creada"}`
     });
+  };
+
+  const handleAddContent = (indexDetail: number) => {
+    form.insertListItem(`details.${indexDetail}.contents`, {
+      urlContent: "",
+      contentTypeID: -1,
+      contentTypeName: ""
+    });
+  };
+
+  const handleSelectContentType = (indexDetail: number, indexContent: number, value: number) => {
+    const contentType = contentTypes?.find((type) => type.contentTypeID === value);
+    if (contentType) {
+      form.setFieldValue(
+        `details.${indexDetail}.contents.${indexContent}.contentTypeName`,
+        contentType.contentTypeName
+      );
+    } else {
+      form.setFieldValue(`details.${indexDetail}.contents.${indexContent}.contentTypeName`, "");
+    }
   };
 
   return (
@@ -133,13 +154,6 @@ export default function FormOrder({ initialValues }: FormOrderProps) {
               <IconTrash />
             </ActionIcon>
             <div className="grid w-full grid-cols-2 gap-4">
-              <DataSelect
-                label="Tipo de contenido"
-                data={contentTypes ?? []}
-                accessorLabel="contentTypeName"
-                accessorValue="contentTypeID"
-                {...form.getInputProps(`details.${index}.contentTypeID`)}
-              />
               <NumberInput
                 label="Cantidad"
                 placeholder="Cantidad"
@@ -147,11 +161,7 @@ export default function FormOrder({ initialValues }: FormOrderProps) {
                 min={1}
                 {...form.getInputProps(`details.${index}.quantity`)}
               />
-              <TextInput
-                label="URL del contenido"
-                placeholder="URL del contenido"
-                {...form.getInputProps(`details.${index}.urlContent`)}
-              />
+
               <TextInput
                 label="Descripción"
                 placeholder="Descripción del contenido"
@@ -172,6 +182,68 @@ export default function FormOrder({ initialValues }: FormOrderProps) {
                 required
                 {...form.getInputProps(`details.${index}.orderDetailCode`)}
               />
+
+              <div className="col-span-2 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <Text className="font-bold">Contenido</Text>
+                  <ActionIcon onClick={() => handleAddContent(index)}>
+                    <IconPlus />
+                  </ActionIcon>
+                </div>
+                <div>
+                  {form.getInputProps("details").error && (
+                    <Text c="red" size="sm">
+                      {form.getInputProps("details").error}
+                    </Text>
+                  )}
+                </div>
+                {form.getValues().details[index].contents &&
+                  form.getValues().details[index].contents.length > 0 &&
+                  form.getValues().details[index].contents.map((_, contentIndex) => (
+                    <Card className="relative grid w-full border border-white" key={contentIndex}>
+                      <ActionIcon
+                        disabled={isEdit}
+                        className="absolute top-0 right-0"
+                        variant="subtle"
+                        color="red"
+                        onClick={() => handleRemoveDetail(index)}
+                      >
+                        <IconTrash />
+                      </ActionIcon>
+                      <div className="grid grid-cols-2 gap-2">
+                        <DataSelect
+                          label="Tipo de contenido"
+                          data={contentTypes ?? []}
+                          accessorLabel="contentTypeName"
+                          accessorValue="contentTypeID"
+                          {...form.getInputProps(
+                            `details.${index}.contents.${contentIndex}.contentTypeID`
+                          )}
+                          onChange={(value) => {
+                            handleSelectContentType(index, contentIndex, value);
+                            form
+                              .getInputProps(`details.${index}.contents.${contentIndex}.contentTypeID`)
+                              .onChange(value);
+                          }}
+                        />
+                        <TextInput
+                          label="URL del contenido"
+                          placeholder="URL del contenido"
+                          {...form.getInputProps(`details.${index}.contents.${contentIndex}.urlContent`)}
+                        />
+                        <TextInput
+                          className="col-span-2"
+                          label="Descripción"
+                          placeholder="Descripción del contenido"
+                          required
+                          {...form.getInputProps(
+                            `details.${index}.contents.${contentIndex}.description`
+                          )}
+                        />
+                      </div>
+                    </Card>
+                  ))}
+              </div>
             </div>
           </Card>
         ))}

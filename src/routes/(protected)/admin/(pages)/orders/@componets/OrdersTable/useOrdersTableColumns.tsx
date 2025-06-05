@@ -90,15 +90,25 @@ export default function useOrdersTableColumns() {
                             <span className="font-bold">Descripción:</span> {detail.description}
                           </Text>
                           <Text size="xs">
-                            <span className="font-bold">Tipo de contenido:</span>{" "}
-                            {detail.contentTypeName}
-                          </Text>
-                          <Text size="xs">
                             <span className="font-bold">Código:</span> {detail.orderDetailCode}
                           </Text>
                           <Text size="xs">
                             <span className="font-bold">Precio:</span> ${detail.price}
                           </Text>
+                          <div>
+                            <span>Contenido:</span>
+                          </div>
+                          {detail.contents.map((content, index) => (
+                            <div key={index} className="flex flex-col gap-2">
+                              <Text size="xs" key={index}>
+                                <span className="font-bold"> {index + 1} - Tipo de contenido: </span>
+                                {content.contentTypeName}
+                              </Text>
+                              <Text size="xs" key={index}>
+                                <span className="font-bold"> Descripción:</span> {content.description}
+                              </Text>
+                            </div>
+                          ))}
                         </div>
                         <Button
                           variant="outline"

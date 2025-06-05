@@ -23,11 +23,14 @@ export interface OrderPerson {
 
 export interface OrderDetail {
   orderDetailID: number;
-  contentTypeID: number;
-  contentTypeName: string;
   orderDetailCode: string;
   description: string;
-  urlContent: string;
+  contents: {
+    contentTypeID: number;
+    contentTypeName: string;
+    urlContent: string;
+    description?: string;
+  }[];
   qrJson: null | string | object;
   quantity: number;
   price: number;

@@ -40,10 +40,18 @@ function RouteComponent() {
               <p>
                 <span className="font-bold"> Descripción:</span> {detail.description}
               </p>
-              <p>
-                <span className="font-bold">Tipo de contenido:</span>Tipo de contenido:{" "}
-                {detail.contentTypeName}
-              </p>
+              {detail.contents.map((content, index) => (
+                <p key={index}>
+                  <span className="font-bold">{index + 1} - Tipo de contenido: </span>
+                  {content.contentTypeName}
+                  {content.description && (
+                    <span>
+                      {" - "}
+                      <span className="font-bold">Descripción:</span> {content.description}
+                    </span>
+                  )}
+                </p>
+              ))}
               <p>
                 <span className="font-bold">Código: </span> {detail.orderDetailCode}
               </p>
