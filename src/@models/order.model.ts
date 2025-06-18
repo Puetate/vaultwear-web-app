@@ -21,6 +21,12 @@ export interface OrderPerson {
   address: string;
 }
 
+export interface LoyaltyCardDetail {
+  loyaltyCardDetailID: number;
+  claimCode: string;
+  qrJson: null | string | object;
+}
+
 export interface OrderDetail {
   orderDetailID: number;
   orderDetailCode: string;
@@ -34,6 +40,7 @@ export interface OrderDetail {
   qrJson: null | string | object;
   quantity: number;
   price: number;
+  loyaltyCardDetail: LoyaltyCardDetail;
 }
 
 export interface HistoricOrderDetail extends OrderDetail {

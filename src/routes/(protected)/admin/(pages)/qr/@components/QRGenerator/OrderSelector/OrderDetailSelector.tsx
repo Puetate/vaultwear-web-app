@@ -22,7 +22,13 @@ export default function OrderDetailSelector({
       <div className="flex flex-col gap-2">
         {orderDetails.map((orderDetail) => {
           const label = `${orderDetail.orderDetailCode} - ${client} - ${orderDetail.description}`;
-          return <Radio value={orderDetail.orderDetailID.toString()} label={label} />;
+          return (
+            <Radio
+              key={orderDetail.orderDetailID}
+              value={orderDetail.orderDetailID.toString()}
+              label={label}
+            />
+          );
         })}
       </div>
     </Radio.Group>

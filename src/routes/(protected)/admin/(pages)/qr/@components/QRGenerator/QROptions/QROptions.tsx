@@ -41,7 +41,7 @@ export default function QROptions({ onChange, initialValues }: QROptionsProps) {
     initialValues: { ...qrOptionsDefault, ...initialValues },
     onValuesChange: (values) => {
       onChange?.(values as Partial<Options>);
-      if (qrContext?.orderDetail.orderDetailID) {
+      if (qrContext?.orderDetail.detailID) {
         qrContext.setOrderDetail({
           qrJson: JSON.stringify(values)
         });
@@ -60,7 +60,7 @@ export default function QROptions({ onChange, initialValues }: QROptionsProps) {
   });
 
   const handleChangeQRContext = () => {
-    if (!qrContext || !qrContext.orderDetail.orderDetailID) {
+    if (!qrContext || !qrContext.orderDetail.detailID) {
       form.setValues({
         data: "",
         qrOptions: {
@@ -71,24 +71,26 @@ export default function QROptions({ onChange, initialValues }: QROptionsProps) {
       setDisableData(false);
       return;
     }
-    const { qrJson, orderDetailCode } = qrContext?.orderDetail;
+    const { qrJson, code, detailIdentifier: detailType } = qrContext?.orderDetail;
+    let qrOptions = {};
     if (qrJson) {
-      form.setValues({ ...JSON.parse(qrJson) });
-    } else if (orderDetailCode) {
-      form.setValues({
-        data: `${PLAY_STORE_URL}&orderDetailCode=${orderDetailCode}`,
-        qrOptions: {
-          ...form.values.qrOptions,
-          typeNumber: defaultTypeNumber.large
-        }
-      });
+      qrOptions = typeof qrJson === "string" ? JSON.parse(qrJson) : qrJson;
     }
+    form.setValues({
+      ...qrOptions,
+      data: `${PLAY_STORE_URL}&${detailType}=${code}`,
+      qrOptions: {
+        ...form.values.qrOptions,
+        typeNumber: defaultTypeNumber.large
+      }
+    });
+
     setDisableData(true);
   };
 
   useShallowEffect(() => {
     handleChangeQRContext();
-  }, [qrContext?.orderDetail.orderDetailID]);
+  }, [qrContext?.orderDetail]);
 
   useEffect(() => {
     onChange?.(form.values as Partial<Options>);
@@ -216,9 +218,7 @@ export default function QROptions({ onChange, initialValues }: QROptionsProps) {
                 <Slider
                   {...form.getInputProps("qrOptions.typeNumber")}
                   min={
-                    qrContext?.orderDetail.orderDetailID
-                      ? defaultTypeNumber.large
-                      : defaultTypeNumber.normal
+                    qrContext?.orderDetail.detailID ? defaultTypeNumber.large : defaultTypeNumber.normal
                   }
                   max={40}
                 />

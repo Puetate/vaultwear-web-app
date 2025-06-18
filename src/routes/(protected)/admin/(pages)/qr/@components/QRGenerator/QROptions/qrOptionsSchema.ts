@@ -103,7 +103,7 @@ export const qrGradientDefault: QRGradientSchema = {
 
 export const defaultTypeNumber = {
   normal: 0,
-  large: 9
+  large: 10
 };
 
 export const getQrImagePath = (schema: "dark" | "light") => {

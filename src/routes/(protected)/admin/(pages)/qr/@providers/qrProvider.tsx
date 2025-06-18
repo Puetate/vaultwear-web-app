@@ -1,10 +1,27 @@
 import { createContext, use, useState } from "react";
 
+export type DetailIdentifier = "orderDetailCode" | "claimCode";
+
+export const detailTypes: {
+  label: string;
+  value: DetailIdentifier;
+}[] = [
+  {
+    label: "Detalle de Orden",
+    value: "orderDetailCode"
+  },
+  {
+    label: "Programa de fidelidad",
+    value: "claimCode"
+  }
+];
+
 interface OrderDetail {
-  orderDetailID: number;
-  orderDetailCode: string;
-  qrJson: string | null;
+  detailID: number;
+  code: string;
+  qrJson: string | null | object;
   text: string;
+  detailIdentifier: DetailIdentifier;
 }
 
 interface QRContextState {
@@ -14,10 +31,11 @@ interface QRContextState {
 }
 
 const initialValues: OrderDetail = {
-  orderDetailID: 0,
-  orderDetailCode: "",
+  detailID: 0,
+  code: "",
   qrJson: null,
-  text: ""
+  text: "",
+  detailIdentifier: "orderDetailCode"
 };
 
 const QRContext = createContext<QRContextState | null>(null);
