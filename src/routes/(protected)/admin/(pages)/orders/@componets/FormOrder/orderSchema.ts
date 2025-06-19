@@ -1,7 +1,6 @@
 import { dayjs } from "@/@lib/dayjs/dayjs";
 import { Decimal } from "decimal.js";
 import { z } from "zod";
-import { personInitialValues, personSchema } from "../../../users/@components/FormPerson/personSchema";
 
 export const createOrderSchema = (isEdit?: boolean) => {
   return z
@@ -11,7 +10,8 @@ export const createOrderSchema = (isEdit?: boolean) => {
         orderDate: z.date(),
         deliveryDate: z.date(),
         deliveryAddress: z.string(),
-        includeDelivery: z.boolean()
+        includeDelivery: z.boolean(),
+        userID: z.number().gt(0, "El cliente es requerido")
       }),
       details: z
         .array(
@@ -43,8 +43,7 @@ export const createOrderSchema = (isEdit?: boolean) => {
             description: z.string().max(100, "La descripción es muy larga")
           })
         )
-        .min(1, "Se requiere al menos un detalle"),
-      person: personSchema.optional()
+        .min(1, "Se requiere al menos un detalle")
     })
     .superRefine(({ order: { orderDate, deliveryDate } }, ctx) => {
       if (!isEdit) {
@@ -90,8 +89,8 @@ export const orderInitialValues: OrderSchema = {
     orderDate: new Date(),
     deliveryDate: new Date(),
     deliveryAddress: "",
-    includeDelivery: false
+    includeDelivery: false,
+    userID: -1
   },
-  details: [],
-  person: personInitialValues
+  details: []
 };

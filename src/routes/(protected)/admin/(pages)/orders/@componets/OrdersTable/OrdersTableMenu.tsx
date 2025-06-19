@@ -1,5 +1,6 @@
 import { dayjs } from "@/@lib/dayjs/dayjs";
 import { Order } from "@/@models/order.model";
+import { Person } from "@/@models/user.model";
 import { Loader, Menu, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { IconCheck, IconCircle, IconCircleOff, IconShirt, IconX } from "@tabler/icons-react";
@@ -34,15 +35,8 @@ export default function OrdersTableMenu({ order }: OrdersTableMenuProps) {
         deliveryAddress: order.deliveryAddress,
         deliveryDate: dayjs(order.deliveryDate).toDate(),
         includeDelivery: order.includeDelivery === "SI",
-        orderDate: dayjs(order.orderDate).toDate()
-      },
-      person: {
-        address: order.person.address,
-        name: order.person.name,
-        surname: order.person.surname,
-        phone: order.person.phone,
-        identification: order.person.identification,
-        personID: order.person.personID
+        orderDate: dayjs(order.orderDate).toDate(),
+        userID: order.user.userID
       },
       details: order.orderDetails.map((detail) => ({
         orderDetailID: detail.orderDetailID,
@@ -54,13 +48,21 @@ export default function OrdersTableMenu({ order }: OrdersTableMenuProps) {
         contents: detail.contents
       }))
     };
+    const person: Person = {
+      personID: order.person.personID,
+      name: order.person.name,
+      surname: order.person.surname,
+      identification: order.person.identification,
+      address: order.person.address,
+      phone: order.person.phone
+    };
     modals.open({
       title: (
         <Text size="lg" className="font-bold">
           Editar Orden
         </Text>
       ),
-      children: <FormOrder initialValues={orderSchema} />,
+      children: <FormOrder initialValues={orderSchema} person={person} />,
       radius: "lg",
       size: "lg"
     });

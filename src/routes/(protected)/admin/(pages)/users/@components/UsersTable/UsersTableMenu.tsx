@@ -5,6 +5,7 @@ import { IconCircle, IconCircleOff, IconUserSquareRounded } from "@tabler/icons-
 import { useMemo } from "react";
 import { toast } from "sonner";
 import FormUser from "../FormUser/FormUser";
+import { UserSchema } from "../FormUser/userSchema";
 import { usePatchToggleUserStatus } from "./@services/patchToggleUserStatus.service";
 
 interface ClientTableMenuProps {
@@ -19,38 +20,25 @@ export default function UserTableMenu({ user }: ClientTableMenuProps) {
   const { mutateAsync: toggleUserStatus, isPending } = usePatchToggleUserStatus();
 
   const handleEditUser = async () => {
+    const userSchema: UserSchema = {
+      user: {
+        userID: user.userID,
+        email: user.email,
+        roleID: user.role.roleID
+      },
+      person: user.person
+    };
     modals.open({
       title: (
         <Text size="lg" className="font-bold">
           Editar Cliente
         </Text>
       ),
-      children: <FormUser user={user} />,
+      children: <FormUser userSchema={userSchema} />,
       radius: "lg",
       size: "xl"
     });
   };
-
-  // const handleRestorePassword = () => {
-  //   modals.openConfirmModal({
-  //     title: "Restaurar contraseña",
-  //     children: <Text size="sm">¿Está seguro de que desea restaurar la contraseña?</Text>,
-  //     labels: { confirm: "Restaurar", cancel: "Cancelar" },
-  //     confirmProps: { color: "red" },
-  //     onConfirm: () => {
-  //       toast.promise(
-  //         restorePasswordMutation({
-  //           clientID: client.clientID,
-  //           userEmail: client.clientContact.email
-  //         }),
-  //         {
-  //           loading: "Restaurando contraseña...",
-  //           success: "Se ha enviado un correo para restaurar la contraseña"
-  //         }
-  //       );
-  //     }
-  //   });
-  // };
 
   const handleToggleUserStatus = () => {
     modals.openConfirmModal({

@@ -1,36 +1,31 @@
 import DataSelect from "@/@components/DataSelect";
 import FormModalButtons from "@/@components/FormModalButtons";
 import { cn } from "@/@lib/utils";
-import SearchPersonFormFields from "@/routes/(protected)/admin/@components/SearchPersonFormFields/SearchPersonFormFields";
 import { PasswordInput, Text, TextInput } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { useMemo } from "react";
 import { toast } from "sonner";
 import { useGetRoles } from "./@services/getRoles.service";
-import { usePatchUser } from "./@services/patchUser.service";
 import { usePostUser } from "./@services/postUser.service";
-import { createUserSchema, userInitialValues, UserSchema } from "./userSchema";
+import { usePutUser } from "./@services/putUser.service";
+import { createUserSchema, editUserSchema, userInitialValues, UserSchema } from "./userSchema";
 
 interface FormUserProps {
-  user?: UserSchema;
+  userSchema?: UserSchema;
+  modalID?: string;
 }
 
-export default function FormUser({ user }: FormUserProps) {
-  const isEditing = useMemo(() => Boolean(user?.userID), [user?.userID]);
+export default function FormUser({ userSchema, modalID }: FormUserProps) {
+  const isEditing = useMemo(() => Boolean(userSchema?.user.userID), [userSchema?.user.userID]);
   const { data: roles } = useGetRoles();
 
   const { mutateAsync: createUserMutation, isPending: isPendingCreate } = usePostUser();
-  const { mutateAsync: editUserMutation, isPending: isPendingEdit } = usePatchUser();
+  const { mutateAsync: editUserMutation, isPending: isPendingEdit } = usePutUser();
 
   const form = useForm({
-    validate: zodResolver(createUserSchema(user?.userID)),
-    initialValues: Boolean(user) ? createUserSchema(user?.userID).parse(user) : userInitialValues
+    validate: zodResolver(userSchema?.user.userID ? editUserSchema : createUserSchema),
+    initialValues: userSchema?.user.userID ? editUserSchema.parse(userSchema) : userInitialValues
   });
-
-  const disableFiled = useMemo(
-    () => Boolean(form.values?.person?.personID),
-    [form.values?.person?.personID]
-  );
 
   const handleSubmit = async (values: UserSchema) => {
     toast.promise(isEditing ? editUserMutation(values) : createUserMutation(values), {
@@ -45,12 +40,12 @@ export default function FormUser({ user }: FormUserProps) {
         Usuario
       </Text>
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <TextInput label="Correo" placeholder="Correo" {...form.getInputProps("email")} required />
+        <TextInput label="Correo" placeholder="Correo" {...form.getInputProps("user.email")} required />
         {!isEditing && (
           <PasswordInput
             label="Contraseña"
             placeholder="Contraseña"
-            {...form.getInputProps("password")}
+            {...form.getInputProps("user.password")}
           />
         )}
         <DataSelect
@@ -61,23 +56,42 @@ export default function FormUser({ user }: FormUserProps) {
           placeholder="Seleccione un rol"
           label="Rol"
           required
-          {...form.getInputProps("role.roleID")}
+          {...form.getInputProps("user.roleID")}
         />
       </section>
-      {!isEditing && (
-        <>
-          <Text className="font-bold" component="h2">
-            Persona
-          </Text>
-          <SearchPersonFormFields
-            form={form}
-            disableFields={disableFiled}
-            initialValues={userInitialValues.person}
-          />
-        </>
-      )}
-
-      <FormModalButtons loading={isPendingCreate || isPendingEdit} />
+      <Text className="font-bold" component="h2">
+        Persona
+      </Text>
+      <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <TextInput label="Nombre" placeholder="Nombre" {...form.getInputProps("person.name")} required />
+        <TextInput
+          label="Apellido"
+          placeholder="Apellido"
+          required
+          {...form.getInputProps("person.surname")}
+        />
+        <TextInput
+          type="tel"
+          label="Teléfono"
+          placeholder="Teléfono"
+          required
+          {...form.getInputProps("person.phone")}
+        />
+        <TextInput
+          label="Identificación"
+          placeholder="Identificación"
+          required
+          {...form.getInputProps("person.identification")}
+        />
+        <TextInput
+          className="col-span-2"
+          label="Dirección"
+          placeholder="Dirección"
+          required
+          {...form.getInputProps("person.address")}
+        />
+      </section>
+      <FormModalButtons loading={isPendingCreate || isPendingEdit} modalID={modalID} />
     </form>
   );
 }

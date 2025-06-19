@@ -1,9 +1,12 @@
+import { Person, User } from "./user.model";
+
 export interface Order {
   orderID: number;
   orderDate: string;
   deliveryDate: string;
   deliveryAddress: string;
   total: string;
+  user: OrderUser;
   person: OrderPerson;
   completed: "COMPLETADA" | "PENDIENTE" | boolean;
   includeDelivery: string;
@@ -11,14 +14,10 @@ export interface Order {
   status: string;
 }
 
-export interface OrderPerson {
-  personID: number;
+export interface OrderUser extends Pick<User, "userID" | "email"> {}
+
+export interface OrderPerson extends Person {
   fullName: string;
-  name: string;
-  surname: string;
-  phone: string;
-  identification: string;
-  address: string;
 }
 
 export interface LoyaltyCardDetail {

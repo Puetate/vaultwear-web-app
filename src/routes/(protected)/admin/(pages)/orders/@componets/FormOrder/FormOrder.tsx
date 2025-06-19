@@ -1,23 +1,28 @@
 import DataSelect from "@/@components/DataSelect";
 import FormModalButtons from "@/@components/FormModalButtons";
 import { dayjs } from "@/@lib/dayjs/dayjs";
-import SearchPersonFormFields from "@/routes/(protected)/admin/@components/SearchPersonFormFields/SearchPersonFormFields";
-import { ActionIcon, Card, Checkbox, NumberInput, Text, TextInput } from "@mantine/core";
+import { Person, User } from "@/@models/user.model";
+import { ActionIcon, Button, Card, Checkbox, NumberInput, Text, TextInput } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
+import { modals } from "@mantine/modals";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import FormUser from "../../../users/@components/FormUser/FormUser";
 import { useGetContentType } from "./@services/getContentType.service";
 import { usePostOrder } from "./@services/postOrder.service";
 import { usePutWithDetailsOrder } from "./@services/putOrderWithDetails.service";
 import { createOrderSchema, defaultDetail, orderInitialValues, OrderSchema } from "./orderSchema";
+import UserAutocomplete from "./UserAutoComplete/UserAutoComplete";
 
 interface FormOrderProps {
   initialValues?: OrderSchema;
+  person?: Person;
 }
 
-export default function FormOrder({ initialValues }: FormOrderProps) {
+export default function FormOrder({ initialValues, person: orderPerson }: FormOrderProps) {
+  const [person, setPerson] = useState<Person | null>(orderPerson || null);
   const isEdit = useMemo(() => {
     return Boolean(initialValues?.order.orderID);
   }, [initialValues?.order.orderID]);
@@ -35,7 +40,6 @@ export default function FormOrder({ initialValues }: FormOrderProps) {
   const formattedDate = useMemo(() => dayjs().format("DDMMYYYYHHss"), []);
 
   const handleAddDetail = () => {
-    const person = form.getValues().person;
     if (!person?.name || !person?.surname) {
       return toast.error("Se requiere un cliente para agregar el detalle");
     }
@@ -57,14 +61,6 @@ export default function FormOrder({ initialValues }: FormOrderProps) {
     form.removeListItem("details", index);
   };
 
-  const handleSubmit = (values: OrderSchema) => {
-    const parsedValues = orderSchema.parse(values);
-    toast.promise(isEdit ? editOrderMutation(parsedValues) : createOrderMutation(parsedValues), {
-      loading: `${isEdit ? "Editando" : "Creando"}Editando orden..`,
-      success: `Orden ${isEdit ? "editada" : "creada"}`
-    });
-  };
-
   const handleAddContent = (indexDetail: number) => {
     form.insertListItem(`details.${indexDetail}.contents`, {
       urlContent: "",
@@ -83,6 +79,34 @@ export default function FormOrder({ initialValues }: FormOrderProps) {
     } else {
       form.setFieldValue(`details.${indexDetail}.contents.${indexContent}.contentTypeName`, "");
     }
+  };
+
+  const handleSelectClient = (user: User | null) => {
+    if (!user) return;
+    form.setFieldValue("order.userID", user.userID);
+    setPerson(user.person);
+  };
+
+  const handleCreateUser = () => {
+    const modalID = modals.open({});
+    modals.updateModal({
+      modalId: modalID,
+      title: (
+        <Text size="lg" className="font-bold">
+          Crear usuario
+        </Text>
+      ),
+      children: <FormUser modalID={modalID} />,
+      size: "lg"
+    });
+  };
+
+  const handleSubmit = (values: OrderSchema) => {
+    const schema = orderSchema.parse(values);
+    toast.promise(isEdit ? editOrderMutation(schema) : createOrderMutation(schema), {
+      loading: `${isEdit ? "Editando" : "Creando"} orden..`,
+      success: `Orden ${isEdit ? "editada" : "creada"}`
+    });
   };
 
   return (
@@ -115,17 +139,13 @@ export default function FormOrder({ initialValues }: FormOrderProps) {
         </div>
       </section>
       <Text className="font-bold">Cliente</Text>
+      <UserAutocomplete onSelectUser={handleSelectClient} />
       {Boolean(form.getValues().order.orderID) ? (
         <Text>
-          {form.getValues().person?.name} {form.getValues().person?.surname} -{" "}
-          {form.getValues().person?.phone}
+          {person?.name} {person?.surname} - {person?.phone}
         </Text>
       ) : (
-        <SearchPersonFormFields
-          form={form}
-          hideFields={Boolean(form.getValues().person?.personID)}
-          initialValues={orderInitialValues.person}
-        />
+        <></>
       )}
 
       <div className="flex items-center justify-between">
@@ -248,7 +268,12 @@ export default function FormOrder({ initialValues }: FormOrderProps) {
           </Card>
         ))}
       </section>
-      <FormModalButtons loading={isPendingCreate || isPendingEdit} />
+      <section className="flex justify-end gap-4">
+        <Button variant="outline" onClick={handleCreateUser}>
+          Crear usuario
+        </Button>
+        <FormModalButtons loading={isPendingCreate || isPendingEdit} />
+      </section>
     </form>
   );
 }

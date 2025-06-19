@@ -1,21 +1,21 @@
-import { Person } from "@/@models/user.model";
+import { User } from "@/@models/user.model";
 import { Autocomplete, AutocompleteProps, Group, Text } from "@mantine/core";
 import { useDebouncedValue, useShallowEffect } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
-import { useSearchByIdentification } from "./@services/searchByIdentification.service";
+import { useSearchByIdentificationOrName } from "./@services/searchByIdentificationOrName.service";
 
 interface PersonAutocompleteProps {
-  onSelectPerson: (value: Person | null) => void;
+  onSelectUser: (value: User | null) => void;
 }
 
-export default function PersonAutocomplete({ onSelectPerson: onSelect }: PersonAutocompleteProps) {
-  const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
-  const [data, setData] = useState<Record<string, Person> | null>(null);
+export default function UserAutocomplete({ onSelectUser: onSelect }: PersonAutocompleteProps) {
+  const [selectedPerson, setSelectedPerson] = useState<User | null>(null);
+  const [data, setData] = useState<Record<string, User> | null>(null);
 
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebouncedValue(search, 500);
-  const { data: persons } = useSearchByIdentification(debouncedSearch);
+  const { data: users } = useSearchByIdentificationOrName(debouncedSearch);
 
   const handleClear = () => {
     setSearch("");
@@ -24,7 +24,7 @@ export default function PersonAutocomplete({ onSelectPerson: onSelect }: PersonA
     setData(null);
   };
 
-  const handleSelect = (person: Person, value: string) => {
+  const handleSelect = (person: User, value: string) => {
     setSelectedPerson(person);
     setSearch(value);
     onSelect(person);
@@ -42,14 +42,16 @@ export default function PersonAutocomplete({ onSelectPerson: onSelect }: PersonA
     if (selectedPerson) {
       return;
     }
-    const newData = persons?.reduce(
+    const newData = users?.reduce(
       (acc, lr) => {
-        const { name, surname, identification } = lr;
+        const {
+          person: { name, surname, identification }
+        } = lr;
         const key = `${name} ${surname} - ${identification}`;
         acc[key] = lr;
         return acc;
       },
-      {} as Record<string, Person>
+      {} as Record<string, User>
     );
     setData(newData ?? {});
   };
@@ -57,9 +59,9 @@ export default function PersonAutocomplete({ onSelectPerson: onSelect }: PersonA
   const renderSelectOption: AutocompleteProps["renderOption"] = useMemo(
     () =>
       ({ option }) => {
-        const person = data?.[option.value] as Person;
+        const user = data?.[option.value] as User;
         return (
-          <Group onClick={() => handleSelect(person, option.value)} flex="1" gap="xs">
+          <Group onClick={() => handleSelect(user, option.value)} flex="1" gap="xs">
             <Text size="sm">{option.value}</Text>
           </Group>
         );
@@ -69,7 +71,7 @@ export default function PersonAutocomplete({ onSelectPerson: onSelect }: PersonA
 
   useShallowEffect(() => {
     handleChangePersons();
-  }, [persons]);
+  }, [users]);
 
   return (
     <Autocomplete

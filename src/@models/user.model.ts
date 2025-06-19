@@ -7,6 +7,7 @@ export interface User {
   };
   email: string;
   status: string;
+  person: Person;
 }
 
 export interface Person {
@@ -16,5 +17,4 @@ export interface Person {
   identification: string;
   phone: string;
   address: string;
-  status: string;
 }

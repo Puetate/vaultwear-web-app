@@ -19,6 +19,18 @@ export default function userUsersTableColumns() {
         header: "Correo"
       },
       {
+        accessorKey: "person.address",
+        header: "Dirección"
+      },
+      {
+        accessorKey: "person.phone",
+        header: "Teléfono"
+      },
+      {
+        accessorKey: "person.identification",
+        header: "Identificación"
+      },
+      {
         accessorKey: "status",
         header: "Estado",
         Cell: ({ row, renderedCellValue }) => {

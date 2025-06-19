@@ -1,13 +1,25 @@
 import { Button } from "@mantine/core";
 import { modals } from "@mantine/modals";
+import { ReactNode } from "react";
 
 interface FormModalButtonsProps {
   loading?: boolean;
   confirmOnly?: boolean;
+  children?: ReactNode;
+  modalID?: string;
 }
 
-export default function FormModalButtons({ loading, confirmOnly = false }: FormModalButtonsProps) {
+export default function FormModalButtons({
+  loading,
+  confirmOnly = false,
+  children,
+  modalID
+}: FormModalButtonsProps) {
   const handleOnClose = () => {
+    if (modalID) {
+      modals.close(modalID);
+      return;
+    }
     modals.closeAll();
   };
 
@@ -23,6 +35,7 @@ export default function FormModalButtons({ loading, confirmOnly = false }: FormM
       <Button loading={loading} type="submit">
         Guardar
       </Button>
+      {children}
     </div>
   );
 }

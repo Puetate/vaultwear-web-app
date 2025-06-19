@@ -8,73 +8,126 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from "./routes/__root"
+import { Route as protectedLayoutRouteImport } from "./routes/(protected)/layout"
+import { Route as authLoginLayoutRouteImport } from "./routes/(auth)/login/layout"
+import { Route as protectedAdminIndexRouteImport } from "./routes/(protected)/admin/index"
+import { Route as authLoginIndexRouteImport } from "./routes/(auth)/login/index"
+import { Route as protectedAdminpagesUsersIndexRouteImport } from "./routes/(protected)/admin/(pages)/users/index"
+import { Route as protectedAdminpagesQrIndexRouteImport } from "./routes/(protected)/admin/(pages)/qr/index"
+import { Route as protectedAdminpagesOrdersIndexRouteImport } from "./routes/(protected)/admin/(pages)/orders/index"
+import { Route as protectedAdminpagesOrderspagesDetailsIdRouteImport } from "./routes/(protected)/admin/(pages)/orders/(pages)/details/$id"
 
-import { Route as rootRoute } from "./routes/__root"
-import { Route as protectedLayoutImport } from "./routes/(protected)/layout"
-import { Route as authLoginLayoutImport } from "./routes/(auth)/login/layout"
-import { Route as protectedAdminIndexImport } from "./routes/(protected)/admin/index"
-import { Route as authLoginIndexImport } from "./routes/(auth)/login/index"
-import { Route as protectedAdminpagesUsersIndexImport } from "./routes/(protected)/admin/(pages)/users/index"
-import { Route as protectedAdminpagesQrIndexImport } from "./routes/(protected)/admin/(pages)/qr/index"
-import { Route as protectedAdminpagesOrdersIndexImport } from "./routes/(protected)/admin/(pages)/orders/index"
-import { Route as protectedAdminpagesOrderspagesDetailsIdImport } from "./routes/(protected)/admin/(pages)/orders/(pages)/details/$id"
-
-// Create/Update Routes
-
-const protectedLayoutRoute = protectedLayoutImport.update({
+const protectedLayoutRoute = protectedLayoutRouteImport.update({
   id: "/(protected)",
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const authLoginLayoutRoute = authLoginLayoutImport.update({
+const authLoginLayoutRoute = authLoginLayoutRouteImport.update({
   id: "/(auth)/login",
   path: "/login",
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const protectedAdminIndexRoute = protectedAdminIndexImport.update({
+const protectedAdminIndexRoute = protectedAdminIndexRouteImport.update({
   id: "/admin/",
   path: "/admin/",
   getParentRoute: () => protectedLayoutRoute,
 } as any)
-
-const authLoginIndexRoute = authLoginIndexImport.update({
+const authLoginIndexRoute = authLoginIndexRouteImport.update({
   id: "/",
   path: "/",
   getParentRoute: () => authLoginLayoutRoute,
 } as any)
-
 const protectedAdminpagesUsersIndexRoute =
-  protectedAdminpagesUsersIndexImport.update({
+  protectedAdminpagesUsersIndexRouteImport.update({
     id: "/admin/(pages)/users/",
     path: "/admin/users/",
     getParentRoute: () => protectedLayoutRoute,
   } as any)
-
-const protectedAdminpagesQrIndexRoute = protectedAdminpagesQrIndexImport.update(
-  {
+const protectedAdminpagesQrIndexRoute =
+  protectedAdminpagesQrIndexRouteImport.update({
     id: "/admin/(pages)/qr/",
     path: "/admin/qr/",
     getParentRoute: () => protectedLayoutRoute,
-  } as any,
-)
-
+  } as any)
 const protectedAdminpagesOrdersIndexRoute =
-  protectedAdminpagesOrdersIndexImport.update({
+  protectedAdminpagesOrdersIndexRouteImport.update({
     id: "/admin/(pages)/orders/",
     path: "/admin/orders/",
     getParentRoute: () => protectedLayoutRoute,
   } as any)
-
 const protectedAdminpagesOrderspagesDetailsIdRoute =
-  protectedAdminpagesOrderspagesDetailsIdImport.update({
+  protectedAdminpagesOrderspagesDetailsIdRouteImport.update({
     id: "/admin/(pages)/orders/(pages)/details/$id",
     path: "/admin/orders/details/$id",
     getParentRoute: () => protectedLayoutRoute,
   } as any)
 
-// Populate the FileRoutesByPath interface
+export interface FileRoutesByFullPath {
+  "/": typeof protectedLayoutRouteWithChildren
+  "/login": typeof authLoginLayoutRouteWithChildren
+  "/login/": typeof authLoginIndexRoute
+  "/admin": typeof protectedAdminIndexRoute
+  "/admin/orders": typeof protectedAdminpagesOrdersIndexRoute
+  "/admin/qr": typeof protectedAdminpagesQrIndexRoute
+  "/admin/users": typeof protectedAdminpagesUsersIndexRoute
+  "/admin/orders/details/$id": typeof protectedAdminpagesOrderspagesDetailsIdRoute
+}
+export interface FileRoutesByTo {
+  "/": typeof protectedLayoutRouteWithChildren
+  "/login": typeof authLoginIndexRoute
+  "/admin": typeof protectedAdminIndexRoute
+  "/admin/orders": typeof protectedAdminpagesOrdersIndexRoute
+  "/admin/qr": typeof protectedAdminpagesQrIndexRoute
+  "/admin/users": typeof protectedAdminpagesUsersIndexRoute
+  "/admin/orders/details/$id": typeof protectedAdminpagesOrderspagesDetailsIdRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  "/(protected)": typeof protectedLayoutRouteWithChildren
+  "/(auth)/login": typeof authLoginLayoutRouteWithChildren
+  "/(auth)/login/": typeof authLoginIndexRoute
+  "/(protected)/admin/": typeof protectedAdminIndexRoute
+  "/(protected)/admin/(pages)/orders/": typeof protectedAdminpagesOrdersIndexRoute
+  "/(protected)/admin/(pages)/qr/": typeof protectedAdminpagesQrIndexRoute
+  "/(protected)/admin/(pages)/users/": typeof protectedAdminpagesUsersIndexRoute
+  "/(protected)/admin/(pages)/orders/(pages)/details/$id": typeof protectedAdminpagesOrderspagesDetailsIdRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | "/"
+    | "/login"
+    | "/login/"
+    | "/admin"
+    | "/admin/orders"
+    | "/admin/qr"
+    | "/admin/users"
+    | "/admin/orders/details/$id"
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | "/"
+    | "/login"
+    | "/admin"
+    | "/admin/orders"
+    | "/admin/qr"
+    | "/admin/users"
+    | "/admin/orders/details/$id"
+  id:
+    | "__root__"
+    | "/(protected)"
+    | "/(auth)/login"
+    | "/(auth)/login/"
+    | "/(protected)/admin/"
+    | "/(protected)/admin/(pages)/orders/"
+    | "/(protected)/admin/(pages)/qr/"
+    | "/(protected)/admin/(pages)/users/"
+    | "/(protected)/admin/(pages)/orders/(pages)/details/$id"
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  protectedLayoutRoute: typeof protectedLayoutRouteWithChildren
+  authLoginLayoutRoute: typeof authLoginLayoutRouteWithChildren
+}
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
@@ -82,62 +135,60 @@ declare module "@tanstack/react-router" {
       id: "/(protected)"
       path: "/"
       fullPath: "/"
-      preLoaderRoute: typeof protectedLayoutImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof protectedLayoutRouteImport
+      parentRoute: typeof rootRouteImport
     }
     "/(auth)/login": {
       id: "/(auth)/login"
       path: "/login"
       fullPath: "/login"
-      preLoaderRoute: typeof authLoginLayoutImport
-      parentRoute: typeof rootRoute
-    }
-    "/(auth)/login/": {
-      id: "/(auth)/login/"
-      path: "/"
-      fullPath: "/login/"
-      preLoaderRoute: typeof authLoginIndexImport
-      parentRoute: typeof authLoginLayoutImport
+      preLoaderRoute: typeof authLoginLayoutRouteImport
+      parentRoute: typeof rootRouteImport
     }
     "/(protected)/admin/": {
       id: "/(protected)/admin/"
       path: "/admin"
       fullPath: "/admin"
-      preLoaderRoute: typeof protectedAdminIndexImport
-      parentRoute: typeof protectedLayoutImport
+      preLoaderRoute: typeof protectedAdminIndexRouteImport
+      parentRoute: typeof protectedLayoutRoute
     }
-    "/(protected)/admin/(pages)/orders/": {
-      id: "/(protected)/admin/(pages)/orders/"
-      path: "/admin/orders"
-      fullPath: "/admin/orders"
-      preLoaderRoute: typeof protectedAdminpagesOrdersIndexImport
-      parentRoute: typeof protectedLayoutImport
-    }
-    "/(protected)/admin/(pages)/qr/": {
-      id: "/(protected)/admin/(pages)/qr/"
-      path: "/admin/qr"
-      fullPath: "/admin/qr"
-      preLoaderRoute: typeof protectedAdminpagesQrIndexImport
-      parentRoute: typeof protectedLayoutImport
+    "/(auth)/login/": {
+      id: "/(auth)/login/"
+      path: "/"
+      fullPath: "/login/"
+      preLoaderRoute: typeof authLoginIndexRouteImport
+      parentRoute: typeof authLoginLayoutRoute
     }
     "/(protected)/admin/(pages)/users/": {
       id: "/(protected)/admin/(pages)/users/"
       path: "/admin/users"
       fullPath: "/admin/users"
-      preLoaderRoute: typeof protectedAdminpagesUsersIndexImport
-      parentRoute: typeof protectedLayoutImport
+      preLoaderRoute: typeof protectedAdminpagesUsersIndexRouteImport
+      parentRoute: typeof protectedLayoutRoute
+    }
+    "/(protected)/admin/(pages)/qr/": {
+      id: "/(protected)/admin/(pages)/qr/"
+      path: "/admin/qr"
+      fullPath: "/admin/qr"
+      preLoaderRoute: typeof protectedAdminpagesQrIndexRouteImport
+      parentRoute: typeof protectedLayoutRoute
+    }
+    "/(protected)/admin/(pages)/orders/": {
+      id: "/(protected)/admin/(pages)/orders/"
+      path: "/admin/orders"
+      fullPath: "/admin/orders"
+      preLoaderRoute: typeof protectedAdminpagesOrdersIndexRouteImport
+      parentRoute: typeof protectedLayoutRoute
     }
     "/(protected)/admin/(pages)/orders/(pages)/details/$id": {
       id: "/(protected)/admin/(pages)/orders/(pages)/details/$id"
       path: "/admin/orders/details/$id"
       fullPath: "/admin/orders/details/$id"
-      preLoaderRoute: typeof protectedAdminpagesOrderspagesDetailsIdImport
-      parentRoute: typeof protectedLayoutImport
+      preLoaderRoute: typeof protectedAdminpagesOrderspagesDetailsIdRouteImport
+      parentRoute: typeof protectedLayoutRoute
     }
   }
 }
-
-// Create and export the route tree
 
 interface protectedLayoutRouteChildren {
   protectedAdminIndexRoute: typeof protectedAdminIndexRoute
@@ -172,136 +223,10 @@ const authLoginLayoutRouteWithChildren = authLoginLayoutRoute._addFileChildren(
   authLoginLayoutRouteChildren,
 )
 
-export interface FileRoutesByFullPath {
-  "/": typeof protectedLayoutRouteWithChildren
-  "/login": typeof authLoginLayoutRouteWithChildren
-  "/login/": typeof authLoginIndexRoute
-  "/admin": typeof protectedAdminIndexRoute
-  "/admin/orders": typeof protectedAdminpagesOrdersIndexRoute
-  "/admin/qr": typeof protectedAdminpagesQrIndexRoute
-  "/admin/users": typeof protectedAdminpagesUsersIndexRoute
-  "/admin/orders/details/$id": typeof protectedAdminpagesOrderspagesDetailsIdRoute
-}
-
-export interface FileRoutesByTo {
-  "/": typeof protectedLayoutRouteWithChildren
-  "/login": typeof authLoginIndexRoute
-  "/admin": typeof protectedAdminIndexRoute
-  "/admin/orders": typeof protectedAdminpagesOrdersIndexRoute
-  "/admin/qr": typeof protectedAdminpagesQrIndexRoute
-  "/admin/users": typeof protectedAdminpagesUsersIndexRoute
-  "/admin/orders/details/$id": typeof protectedAdminpagesOrderspagesDetailsIdRoute
-}
-
-export interface FileRoutesById {
-  __root__: typeof rootRoute
-  "/(protected)": typeof protectedLayoutRouteWithChildren
-  "/(auth)/login": typeof authLoginLayoutRouteWithChildren
-  "/(auth)/login/": typeof authLoginIndexRoute
-  "/(protected)/admin/": typeof protectedAdminIndexRoute
-  "/(protected)/admin/(pages)/orders/": typeof protectedAdminpagesOrdersIndexRoute
-  "/(protected)/admin/(pages)/qr/": typeof protectedAdminpagesQrIndexRoute
-  "/(protected)/admin/(pages)/users/": typeof protectedAdminpagesUsersIndexRoute
-  "/(protected)/admin/(pages)/orders/(pages)/details/$id": typeof protectedAdminpagesOrderspagesDetailsIdRoute
-}
-
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | "/"
-    | "/login"
-    | "/login/"
-    | "/admin"
-    | "/admin/orders"
-    | "/admin/qr"
-    | "/admin/users"
-    | "/admin/orders/details/$id"
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | "/"
-    | "/login"
-    | "/admin"
-    | "/admin/orders"
-    | "/admin/qr"
-    | "/admin/users"
-    | "/admin/orders/details/$id"
-  id:
-    | "__root__"
-    | "/(protected)"
-    | "/(auth)/login"
-    | "/(auth)/login/"
-    | "/(protected)/admin/"
-    | "/(protected)/admin/(pages)/orders/"
-    | "/(protected)/admin/(pages)/qr/"
-    | "/(protected)/admin/(pages)/users/"
-    | "/(protected)/admin/(pages)/orders/(pages)/details/$id"
-  fileRoutesById: FileRoutesById
-}
-
-export interface RootRouteChildren {
-  protectedLayoutRoute: typeof protectedLayoutRouteWithChildren
-  authLoginLayoutRoute: typeof authLoginLayoutRouteWithChildren
-}
-
 const rootRouteChildren: RootRouteChildren = {
   protectedLayoutRoute: protectedLayoutRouteWithChildren,
   authLoginLayoutRoute: authLoginLayoutRouteWithChildren,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/(protected)",
-        "/(auth)/login"
-      ]
-    },
-    "/(protected)": {
-      "filePath": "(protected)/layout.tsx",
-      "children": [
-        "/(protected)/admin/",
-        "/(protected)/admin/(pages)/orders/",
-        "/(protected)/admin/(pages)/qr/",
-        "/(protected)/admin/(pages)/users/",
-        "/(protected)/admin/(pages)/orders/(pages)/details/$id"
-      ]
-    },
-    "/(auth)/login": {
-      "filePath": "(auth)/login/layout.tsx",
-      "children": [
-        "/(auth)/login/"
-      ]
-    },
-    "/(auth)/login/": {
-      "filePath": "(auth)/login/index.tsx",
-      "parent": "/(auth)/login"
-    },
-    "/(protected)/admin/": {
-      "filePath": "(protected)/admin/index.tsx",
-      "parent": "/(protected)"
-    },
-    "/(protected)/admin/(pages)/orders/": {
-      "filePath": "(protected)/admin/(pages)/orders/index.tsx",
-      "parent": "/(protected)"
-    },
-    "/(protected)/admin/(pages)/qr/": {
-      "filePath": "(protected)/admin/(pages)/qr/index.tsx",
-      "parent": "/(protected)"
-    },
-    "/(protected)/admin/(pages)/users/": {
-      "filePath": "(protected)/admin/(pages)/users/index.tsx",
-      "parent": "/(protected)"
-    },
-    "/(protected)/admin/(pages)/orders/(pages)/details/$id": {
-      "filePath": "(protected)/admin/(pages)/orders/(pages)/details/$id.tsx",
-      "parent": "/(protected)"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
