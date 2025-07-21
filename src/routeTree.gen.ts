@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from "./routes/__root"
 import { Route as protectedLayoutRouteImport } from "./routes/(protected)/layout"
 import { Route as authLoginLayoutRouteImport } from "./routes/(auth)/login/layout"
+import { Route as publicPrivacyPolicyIndexRouteImport } from "./routes/(public)/privacy-policy/index"
 import { Route as protectedAdminIndexRouteImport } from "./routes/(protected)/admin/index"
 import { Route as authLoginIndexRouteImport } from "./routes/(auth)/login/index"
 import { Route as protectedAdminpagesUsersIndexRouteImport } from "./routes/(protected)/admin/(pages)/users/index"
@@ -27,6 +28,12 @@ const authLoginLayoutRoute = authLoginLayoutRouteImport.update({
   path: "/login",
   getParentRoute: () => rootRouteImport,
 } as any)
+const publicPrivacyPolicyIndexRoute =
+  publicPrivacyPolicyIndexRouteImport.update({
+    id: "/(public)/privacy-policy/",
+    path: "/privacy-policy/",
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const protectedAdminIndexRoute = protectedAdminIndexRouteImport.update({
   id: "/admin/",
   path: "/admin/",
@@ -67,6 +74,7 @@ export interface FileRoutesByFullPath {
   "/login": typeof authLoginLayoutRouteWithChildren
   "/login/": typeof authLoginIndexRoute
   "/admin": typeof protectedAdminIndexRoute
+  "/privacy-policy": typeof publicPrivacyPolicyIndexRoute
   "/admin/orders": typeof protectedAdminpagesOrdersIndexRoute
   "/admin/qr": typeof protectedAdminpagesQrIndexRoute
   "/admin/users": typeof protectedAdminpagesUsersIndexRoute
@@ -76,6 +84,7 @@ export interface FileRoutesByTo {
   "/": typeof protectedLayoutRouteWithChildren
   "/login": typeof authLoginIndexRoute
   "/admin": typeof protectedAdminIndexRoute
+  "/privacy-policy": typeof publicPrivacyPolicyIndexRoute
   "/admin/orders": typeof protectedAdminpagesOrdersIndexRoute
   "/admin/qr": typeof protectedAdminpagesQrIndexRoute
   "/admin/users": typeof protectedAdminpagesUsersIndexRoute
@@ -87,6 +96,7 @@ export interface FileRoutesById {
   "/(auth)/login": typeof authLoginLayoutRouteWithChildren
   "/(auth)/login/": typeof authLoginIndexRoute
   "/(protected)/admin/": typeof protectedAdminIndexRoute
+  "/(public)/privacy-policy/": typeof publicPrivacyPolicyIndexRoute
   "/(protected)/admin/(pages)/orders/": typeof protectedAdminpagesOrdersIndexRoute
   "/(protected)/admin/(pages)/qr/": typeof protectedAdminpagesQrIndexRoute
   "/(protected)/admin/(pages)/users/": typeof protectedAdminpagesUsersIndexRoute
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | "/login"
     | "/login/"
     | "/admin"
+    | "/privacy-policy"
     | "/admin/orders"
     | "/admin/qr"
     | "/admin/users"
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | "/"
     | "/login"
     | "/admin"
+    | "/privacy-policy"
     | "/admin/orders"
     | "/admin/qr"
     | "/admin/users"
@@ -118,6 +130,7 @@ export interface FileRouteTypes {
     | "/(auth)/login"
     | "/(auth)/login/"
     | "/(protected)/admin/"
+    | "/(public)/privacy-policy/"
     | "/(protected)/admin/(pages)/orders/"
     | "/(protected)/admin/(pages)/qr/"
     | "/(protected)/admin/(pages)/users/"
@@ -127,6 +140,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   protectedLayoutRoute: typeof protectedLayoutRouteWithChildren
   authLoginLayoutRoute: typeof authLoginLayoutRouteWithChildren
+  publicPrivacyPolicyIndexRoute: typeof publicPrivacyPolicyIndexRoute
 }
 
 declare module "@tanstack/react-router" {
@@ -143,6 +157,13 @@ declare module "@tanstack/react-router" {
       path: "/login"
       fullPath: "/login"
       preLoaderRoute: typeof authLoginLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/(public)/privacy-policy/": {
+      id: "/(public)/privacy-policy/"
+      path: "/privacy-policy"
+      fullPath: "/privacy-policy"
+      preLoaderRoute: typeof publicPrivacyPolicyIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/(protected)/admin/": {
@@ -226,6 +247,7 @@ const authLoginLayoutRouteWithChildren = authLoginLayoutRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   protectedLayoutRoute: protectedLayoutRouteWithChildren,
   authLoginLayoutRoute: authLoginLayoutRouteWithChildren,
+  publicPrivacyPolicyIndexRoute: publicPrivacyPolicyIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
