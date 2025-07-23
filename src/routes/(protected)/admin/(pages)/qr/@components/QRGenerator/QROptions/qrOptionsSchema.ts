@@ -107,7 +107,7 @@ export const defaultTypeNumber = {
 };
 
 export const getQrImagePath = (schema: "dark" | "light") => {
-  return `${window.location.origin}/${schema === "dark" ? "logo-dark.svg" : "logo.svg"}`;
+  return `${window.location.origin}/RUMI logo qr.png`;
 };
 
 export const qrOptionsDefault: QROptionsSchema = {
